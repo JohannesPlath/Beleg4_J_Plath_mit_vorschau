@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WSI-View-Service</title>
+    <script src="/js/func.js" async></script>
+    <meta name="description" content="A Page to view details of a slide.">
+
+
+
+</head>
+<body style="background-color: darkgray;
+        display: flex;
+        flex-direction: column;
+        flex-flow: column;
+        align-items: center;" >
+
+    <table>
+        <thead>
+            <th width="15%">
+                <button onclick="getListOfImages()">Get Images</button>
+            </th>
+            <th width="25%">
+                <div id="image-selection">
+                </div>
+            </th>
+
+            <th width="60%">
+                <table>
+                    <button onclick="getNewRegion('up')">up</button>
+                    <br>
+                    <br>
+                    <button style=" border-right-width: 15px"; onclick="getNewRegion('left')"> left</button>
+                    <button style=" border-left-width: 15px";  onclick="getNewRegion('right')">right</button>
+                    <br>
+                    <br>
+                    <button onclick="getNewRegion('down')">down</button>
+                    <br>
+                    <br>
+                    <button style=" border-right-width: 15px"; onclick="getNewRegion('Zoom_In')">Zoom_In</button>
+                    <button style=" border-left-width: 15px"; onclick="getNewRegion('Zoom_Out')">Zoom_Out</button>
+                </table>
+            </th>
+
+        </thead>
+    </table>
+
+    <table>
+        <thead>
+            <th width="10%" style="background-color: white">
+                <img id="region-image">
+            </th>
+            <th width="70%">
+                <p>Thumbnail:</p>
+                <img id="thumbnail">
+                </br></br>
+                <p>Label:</p>
+                <img id="label">
+            </th>
+        </thead>
+    </table>
+    <table>
+
+    </table>
+<dif style="background-color: darkgray; display: flex;
+        flex-direction: column;
+        flex-flow: column;
+        align-items: center;" >
+
+        <p>Author: Johannes Plath</p>
+        <p><a href="mailto:Johannes.Plath@Student.HTW-Berlin.de"; style="color: chocolate">Johannes.Plath@Student.HTW-Berlin.de</a></p>
+        <dl>
+            <dd><a href="Tel:+49-179-3946067" style="color: chocolate">available @ phone: 0179 394 60 67</a> </dd>
+        </dl>
+    <h1><a href="http://localhost:8080/"; style="color: brown">Back to overview </a></h1>
+    </dif>
+</body>
+</html>
