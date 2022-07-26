@@ -68,12 +68,15 @@ def check_x(x, thumbnail):
     return x
 
     #print("@ Check x,y ", x, " ", y)
+
+
 def check_y(y, thumbnail):
     if (y > thumbnail.height):
         print("thumbnail.height ", thumbnail.height)
         print("Y ", y)
         y = thumbnail.height - 5
     return y
+
 
 def check_x_y(x, y, thumbnail):
     if (x > thumbnail.width):
@@ -200,7 +203,9 @@ async def get_meta_data(
         fname: str,
 ):
     meta_data = images_service.wsi_meta(fname)
-    pprint( dict(meta_data))
+    if should_print:
+        print(" -------> @ getMeta")
+        pprint( dict(meta_data))
     #return meta_data
     response_content = {"wsi_meta": [dict(meta_data)]}
     return JSONResponse(content=response_content, status_code=200)
