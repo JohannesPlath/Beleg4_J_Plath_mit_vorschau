@@ -13,6 +13,8 @@ let metaData;
 const MAXLevelReducer = -1;
 const Move_FACTOR = 5;
 const THUMBNAILSIZE = 500;
+const SHOULD_PRINT = true;
+
 
 async function get_image(fname) {
   actualWsi = fname;
@@ -154,7 +156,8 @@ async function getNewRegion(newDetail){
     setMaxActualMetaData(zoomlevel);
     checkHeightExtrema();
     checkWidthExtrema();
-    console.log("@ getNewRegion printMetaData()", await printMetadata());
+    if (SHOULD_PRINT)
+        console.log("@ getNewRegion printMetaData()", await printMetadata());
     await getThumbnailDetail(actualWsi);
     await askForImage()
 }
@@ -162,7 +165,8 @@ async function getNewRegion(newDetail){
 async function askForImage(){
 
     let actualUrl = "./api/images/" + actualWsi +"/placeholder/" +  Math.floor((actualXLocation)) +"/" +  Math.floor(actualYLocation) + "/" +   shownWidth + "/" + shownHeight + "/" + zoomlevel;
-    console.log("func.js getNewRegion",  actualUrl)
+    if (SHOULD_PRINT)
+        console.log("func.js getNewRegion",  actualUrl)
     document.getElementById("region-image").src = actualUrl;
 }
 
@@ -180,40 +184,49 @@ function setMaxActualMetaData(currentZoomlevel){
 function center_View() {
     actualXLocation = maxActualWidth / 2;
     actualXLocation = actualXLocation - (shownWidth / 2);
+    if (actualXLocation < 0)
+        actualXLocation = 0;
     actualYLocation = maxActualHeight / 2;
     actualYLocation = actualYLocation - (shownHeight / 2);
-
+    if (actualYLocation < 0)
+        actualYLocation = 0;
+    if (SHOULD_PRINT) {
+        console.log("@ center_View print...")
+        printMetadata()
+    }
 }
 
 function printMetadata(){
-    console.log("actualXLocation ", actualXLocation);
-    console.log("actualYLocation ", actualYLocation);
-    console.log("maxActualWidth ", maxActualWidth);
-    console.log("maxAtualHeight ", maxActualHeight);
-    console.log("zoomlevel ", zoomlevel);
-    console.log("maxWidth ", maxWidth);
-    console.log( "maxHeight ", maxHeight);
-    console.log("shown height ", shownHeight)
-    console.log("shown width ", shownWidth)
-    console.log("actualMaxZoomLevel ", actualMaxZoomLevel);
-
+    if (SHOULD_PRINT) {
+        console.log("actualXLocation ", actualXLocation);
+        console.log("actualYLocation ", actualYLocation);
+        console.log("maxActualWidth ", maxActualWidth);
+        console.log("maxAtualHeight ", maxActualHeight);
+        console.log("zoomlevel ", zoomlevel);
+        console.log("maxWidth ", maxWidth);
+        console.log("maxHeight ", maxHeight);
+        console.log("shown height ", shownHeight)
+        console.log("shown width ", shownWidth)
+        console.log("actualMaxZoomLevel ", actualMaxZoomLevel);
+    }
 }
 function checkWidthExtrema(){
     if (actualXLocation > maxActualWidth - shownWidth){
         actualXLocation = maxActualWidth - shownWidth;
-        if (actualXLocation > maxActualWidth){
+       /* if (actualXLocation > maxActualWidth){
             actualXLocation = maxActualWidth;
-        }
+        }*/
     }
     if (actualXLocation < 0)
         actualXLocation = 0;
-    //return actualXLocation;
+    return actualXLocation;
 }
 function checkHeightExtrema(){
-    if (actualYLocation < 0 )
-        actualYLocation = 0;
+
     if (actualYLocation > maxActualHeight - shownHeight)
         actualYLocation = maxActualHeight - shownHeight;
+    if (actualYLocation < 0 )
+        actualYLocation = 0;
     return actualYLocation;
 }
 

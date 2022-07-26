@@ -33,7 +33,6 @@ def get_list_of_availible_images():
         return "no Images exists in specified path"
 
 
-
 def get_specificPicture(pic_name: str):
     # print("picName: ", pic_name)
     if os.path.exists(abspath + r"/" + pic_name) == True:
@@ -51,7 +50,7 @@ def valid_media_typ(file):
     return isvalid
 
 
-def addPic(pic, pic_as_byte):
+def add_pic(pic, pic_as_byte):
     file_location = fr"{abspath}/{pic.filename}"
     if valid_media_typ(pic):
         with open(file_location, "wb+") as file_object:
@@ -65,20 +64,27 @@ def wsi_region(input_file, level, x_location, y_location, width, height):
     if should_print:
         print("@  wsi_region")
         print("path: ", "./image_bucked/" + input_file)
-        print("level, x_location, y_location, width, height ",level, " ", x_location, " ", y_location, " ", width, " ", height)
-    actual_slide = openslide.OpenSlide("./image_bucked/" + input_file)
-    img = actual_slide.read_region((x_location, y_location), level, (width, height))
-    #img.save("test_bucked/new_Region_" + input_file)
-    return img
+        print("level, x_location, y_location, width, height ", level, " ", x_location, " ", y_location, " ", width, " ",
+              height)
+    try:
+        actual_slide = openslide.OpenSlide("./image_bucked/" + input_file)
+        img = actual_slide.read_region((x_location, y_location), level, (width, height))
+        # img.save("test_bucked/new_Region_" + input_file)
+        return img
+    except:
+        return None
 
 
 def wsi_thumbnail(input_file, width, height):
     if should_print:
         print("thumbnail @ wsi_thumbnail")
-    actual_slide = openslide.OpenSlide("./image_bucked/" + input_file)
-    img = actual_slide.get_thumbnail((width, height))
-    #img.save("test_bucked/new_Thumbnail_" + input_file)
-    return img
+    try:
+        actual_slide = openslide.OpenSlide("./image_bucked/" + input_file)
+        img = actual_slide.get_thumbnail((width, height))
+        # img.save("test_bucked/new_Thumbnail_" + input_file)
+        return img
+    except:
+        return None
 
 
 def wsi_label(input_file):
@@ -86,11 +92,10 @@ def wsi_label(input_file):
     result = None
     try:
         result = actual_slide.associated_images["label"]
-        #result.save("test_bucked/new_label_" + input_file)
+        # result.save("test_bucked/new_label_" + input_file)
+        return result
     except:
         return result
-    return result
-
 
 
 def wsi_meta(input_file):

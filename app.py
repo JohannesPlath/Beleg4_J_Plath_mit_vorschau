@@ -254,7 +254,7 @@ async def post_specific(image: UploadFile):
         response_content = f"Operation denied... given image {image.filename} already exist on DB",
         return JSONResponse(content=response_content, status_code=409)
     else:
-        excess, tmp = images_service.addPic(image, given_content)
+        excess, tmp = images_service.add_pic(image, given_content)
 
         if excess:
             return JSONResponse(content=tmp, status_code=201)
@@ -297,8 +297,12 @@ async def get_detailed_image(
     region = images_service.wsi_region(actualWsi, zoomlevel, x_location, y_location, width, height)
     return stream_response(region)
 
-
-
+def check_extrema_detail(shown_marked_height, shown_marked_width, thumbnail):
+    if (shown_marked_width > thumbnail.width):
+        shown_marked_width = thumbnail.width
+    if (shown_marked_height > thumbnail.height):
+        shown_marked_height = thumbnail.height
+    return shown_marked_height, shown_marked_width
 
 @app.get(path="/api/thumb_detail/{fname}/{x_location_factor}/{y_location_factor}/{widthfactor}/{heightfactor}/{zoomlevel}",
     summary="Return the thumbnail of an image",
@@ -328,6 +332,7 @@ async def get_thumbnail_detail(
     y_location = round((y_location_factor * thumbnail.height))
     shown_marked_width = round((thumbnail.width * widthfactor))
     shown_marked_height = round(thumbnail.height * heightfactor)
+    shown_marked_height, shown_marked_width = check_extrema_detail(shown_marked_height, shown_marked_width, thumbnail)
     check_meta_data(fname, x_location, y_location, shown_marked_width, shown_marked_height, zoomlevel)
     detailed = thumbnail.load()
     max_x_value = x_location + shown_marked_width
@@ -345,17 +350,17 @@ async def get_thumbnail_detail(
 
     if max_x_value > thumbnail.width:
         print("allert max_x_value " , max_x_value)
-        max_x_value = thumbnail.width - 5
+        max_x_value = thumbnail.width - 2
     for x in range(x_location , max_x_value):            # oberer Balken
-        for y in range(y_location - 2, y_location + 2 ):
+        for y in range(y_location , y_location + 2 ):
             detailed[x, y] = (250, 0, 0)
     for x in range(x_location, max_x_value):             # unterer Balken
-        for y in range(y_location + shown_marked_height - 5, y_location + shown_marked_height ):
+        for y in range(y_location + shown_marked_height - 2, y_location + shown_marked_height ):
             detailed[x, y] = (250, 0, 0)
-    for x in range(x_location, x_location + 5):                 # linker Balken
+    for x in range(x_location, x_location + 2):                 # linker Balken
         for y in range(y_location , y_location + shown_marked_height ):
             detailed[x, y] = (250, 0, 0)
-    for x in range(x_location + shown_marked_width - 5, max_x_value ):  # rechter Balken
+    for x in range(x_location + shown_marked_width - 2, max_x_value ):  # rechter Balken
         for y in range(y_location , y_location + shown_marked_height ):
             detailed[x, y] = (250, 0, 0)
     return stream_response(thumbnail)
