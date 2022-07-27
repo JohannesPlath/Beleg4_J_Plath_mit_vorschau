@@ -67,8 +67,6 @@ def check_x(x, thumbnail):
         x = thumbnail.width - 5
     return x
 
-    #print("@ Check x,y ", x, " ", y)
-
 
 def check_y(y, thumbnail):
     if (y > thumbnail.height):
@@ -97,12 +95,10 @@ def stream_response(image):
          response_class=HTMLResponse,
          responses={
              200: {
-                 "content": {
-                     "html-page": {"schema": {"type": "html", "format": "complete HTML page"}}
-                 },
+                 "model": Response_html,
                  "descripption": "complete and interactive html-page",
              },
-             404: {"model": ResponseMessage},
+             404: {"description": "page not found", "model": ResponseMessage},
          })
 async def _(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
@@ -114,19 +110,17 @@ async def _(request: Request):
          response_class=HTMLResponse,
          responses={
              200: {
-                 "content": {
-                     "html-page": {"schema": {"type": "html", "format": "complete HTML page"}}
-                 },
+                 "model": Response_html,
                  "descripption": "complete and interactive html-page",
              },
-             404: {"model": ResponseMessage},
+             404: {"description": "page not found", "model": ResponseMessage},
          })
 async def _(request: Request):
     return templates.TemplateResponse("viewer.html", {"request": request})
 
 
 @app.get(
-    path="/api/images",
+    path="/api/wsis",
     summary="list of availible images",
     response_model=ImageList,
     responses={
@@ -143,7 +137,7 @@ async def get_all():
     return JSONResponse(content=response_content.dict(), status_code=200)
 
 @app.get(
-    path="/api/thumbnail/{fname}",
+    path="/api/wsis/{fname}/thumbail/{width}/{height}",
     summary="Return the thumbnail of an image",
     response_class=FileResponse,
     responses={
@@ -159,13 +153,16 @@ async def get_all():
 )
 async def get_thumnail(
         fname: str,
+        width: int,
+        height: int,
 ):
-    #print("@ get_thumbnail + fname", fname)
-    thumbnail = images_service.wsi_thumbnail(fname, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT)
+    if should_print:
+        print("@ get_thumbnail + fname", fname)
+    thumbnail = images_service.wsi_thumbnail(fname, width, height)
     return stream_response(thumbnail)
 
 @app.get(
-    path="/api/label/{fname}",
+    path="/api/wsis/{fname}/label",
     summary="Return the label of an image",
     response_class=FileResponse,
     responses={
@@ -211,32 +208,8 @@ async def get_meta_data(
     return JSONResponse(content=response_content, status_code=200)
 
 
-# @app.get(
-#     path="/api/images/{fname}",
-#     summary="Return a image",
-#     response_class=FileResponse,
-#     responses={
-#         200: {
-#             "content": {
-#                 "images/png": {"schema": {"type": "media/image", "format": ".tiff"}}
-#             },
-#             "description": "The Image was found and responses.",
-#         },
-#         404: {"model": ResponseMessage},
-#         422: {"model": Unprocessable_entity}
-#     },
-# )
-# async def read_item(fname: str):
-#     file_resp = images.images_service.get_specificPicture(fname)
-#     if (file_resp):
-#         return file_resp
-#     else:
-#         response_message = {"message": " image '{}' does not exist on the server".format(fname)},
-#         return JSONResponse(response_message, status_code=404)
-#
-#
 @app.post(
-    path="/api/images",
+    path="/api/wsis",
     summary="uploading an image",
     status_code=201,
     response_model=ResponseMessageTrue,
@@ -262,7 +235,7 @@ async def post_specific(image: UploadFile):
             return JSONResponse(content=tmp, status_code=415)
 
 @app.get(
-    path="/api/images/{actualWsi}/placeholder/{x_location}/{y_location}/{width}/{height}/{zoomlevel}",
+    path="/api/wsis/{actualWsi}/region/{x_location}/{y_location}/{width}/{height}/{zoomlevel}",
     summary="responses a specific image with given detail",
     status_code=200,
     response_class=FileResponse,
@@ -304,7 +277,7 @@ def check_extrema_detail(shown_marked_height, shown_marked_width, thumbnail):
         shown_marked_height = thumbnail.height
     return shown_marked_height, shown_marked_width
 
-@app.get(path="/api/thumb_detail/{fname}/{x_location_factor}/{y_location_factor}/{widthfactor}/{heightfactor}/{zoomlevel}",
+@app.get(path="/api/wsis/{fname}/thumb_detail/{x_location_factor}/{y_location_factor}/{widthfactor}/{heightfactor}/{zoomlevel}",
     summary="Return the thumbnail of an image",
     response_class=FileResponse,
     responses={
