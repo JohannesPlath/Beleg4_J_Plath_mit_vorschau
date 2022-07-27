@@ -13,7 +13,7 @@ let metaData;
 const MAXLevelReducer = -1;
 const Move_FACTOR = 5;
 const THUMBNAILSIZE = 500;
-const SHOULD_PRINT = true;
+const SHOULD_PRINT = false;
 
 
 async function get_image(fname) {
@@ -23,38 +23,45 @@ async function get_image(fname) {
 
 async function getThumbnail(fname){
     let actualUrl = "./api/wsis/" + fname + "/thumbnail ";
-    //console.log("-->> @GetThumnail()  actulalURL : " ,  actualUrl);
+     if (SHOULD_PRINT)
+        console.log("-->> @GetThumnail()  actulalURL : " ,  actualUrl);
     document.getElementById("thumbnail").src = actualUrl;
 }
 
 async function getLabel(){
     let actualURL = "./api/wsis/" + actualWsi +"/label";
     let label = actualURL
-    //console.log("label", label)
+     if (SHOULD_PRINT)
+        console.log("label", label)
     document.getElementById("label").src = actualURL
 }
 
 async function getMeta() {
-    console.log(" -------------------  >    @ getMeta() Arrived!!!")
+    if (SHOULD_PRINT)
+        console.log(" -------------------  >    @ getMeta() Arrived!!!")
     let actualURL = "./api/meta/" + actualWsi;
     meta = await fetch(actualURL)
     let jsonMeta = JSON.parse(await meta.text())
-    //console.log("jsonMeta.wsi_meta ", jsonMeta.wsi_meta[0]["openslide.level-count"])
+    if (SHOULD_PRINT)
+        console.log("jsonMeta.wsi_meta ", jsonMeta.wsi_meta[0]["openslide.level-count"])
     metaData = jsonMeta.wsi_meta[0]
     setLocalMetaData(jsonMeta.wsi_meta[0]["openslide.level-count"] -1)
 }
 
 function setLocalMetaData( currentZoomlevel){
-    //console.log("@ setMetaData: ")
+     if (SHOULD_PRINT)
+        console.log("@ setMetaData: ")
     maxHeight =parseInt( metaData["openslide.level[" + 0 + "].height"]);
     maxWidth =  parseInt(metaData["openslide.level[" + 0 + "].width"]);
     actualYLocation = parseInt(metaData["openslide.level[" + currentZoomlevel + "].height"]);
     actualXLocation =  parseInt(metaData["openslide.level[" + currentZoomlevel + "].width"]);
     maxActualHeight = parseInt(metaData["openslide.level[" + currentZoomlevel + "].height"]);
     maxActualWidth =  parseInt(metaData["openslide.level[" + currentZoomlevel + "].width"]);
-    //console.log("@ setMetaData + maxWidth: ", maxWidth)
+     if (SHOULD_PRINT)
+        console.log("@ setMetaData + maxWidth: ", maxWidth)
     let maxZoomLevel = parseInt(metaData["openslide.level-count"]);
-    // console.log("maxZoomLevel maxZoomLevel , MAXLevelReducer ", maxZoomLevel , MAXLevelReducer)
+     if (SHOULD_PRINT)
+        console.log("maxZoomLevel maxZoomLevel , MAXLevelReducer ", maxZoomLevel , MAXLevelReducer)
     actualMaxZoomLevel = maxZoomLevel + MAXLevelReducer
 
 }
@@ -65,7 +72,8 @@ async function getListOfImages() {
     let files = await imagelist.json();
     let filesHtml = "";
     for (i = 0; i < files["images"].length; i++) {
-    // console.log(files["images"][i])
+         if (SHOULD_PRINT)
+             console.log(files["images"][i])
         filesHtml = filesHtml + "<a onclick='get_image(\"" + files["images"][i] + "\")'>" + files["images"][i] + "</a><br>";
     }
     document.getElementById("image-selection").innerHTML = filesHtml;
@@ -85,7 +93,8 @@ async function getThumbnailDetail(fname){
     let markedWidth = (shownWidth / maxActualWidth).toFixed(3)
     let markedHeight = (shownHeight / maxActualHeight).toFixed(3)
     let actualUrl = "/api/wsis/"+ fname  + "/thumb_detail/"+ xLoc+"/"+ yLoc +"/"+ markedWidth +"/"+ markedHeight +"/"+ zoomlevel;
-    console.log("-->> @GetThumnailDetail()  actulalURL : " ,  actualUrl);
+    if (SHOULD_PRINT)
+        console.log("-->> @GetThumnailDetail()  actulalURL : " ,  actualUrl);
 
     document.getElementById("thumbnail").src = actualUrl;
 }

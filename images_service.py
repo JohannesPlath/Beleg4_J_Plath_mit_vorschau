@@ -10,7 +10,7 @@ import openslide
 import argparse
 from fastapi.responses import FileResponse
 
-should_print = True
+should_print = False
 
 abspath = r"./image_bucked/"
 extention_list: List[str] = [".TIFF", ".tiff", ".svs", ".SVS", ".tif", ".TIF"]
@@ -92,7 +92,6 @@ def wsi_label(input_file):
     result = None
     try:
         result = actual_slide.associated_images["label"]
-        # result.save("test_bucked/new_label_" + input_file)
         return result
     except:
         return result
@@ -103,6 +102,3 @@ def wsi_meta(input_file):
         print("arrived @ meta")
     actual_slide = openslide.OpenSlide("./image_bucked/" + input_file)
     return actual_slide.properties
-
-# if __name__ != '__images_service':
-#     wsi_region("CMU-1.tiff", 0, 20000, 22000, 1200, 1200)

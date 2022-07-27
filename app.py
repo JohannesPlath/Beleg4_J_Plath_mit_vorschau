@@ -30,7 +30,7 @@ fallback_thumb_width = 200
 fallback_height_factor = 100
 fallback_width_factor = 100
 
-should_print = True
+should_print = False
 
 app.mount("/js", StaticFiles(directory="frontend/js"), name="js")
 templates = Jinja2Templates(directory="frontend/htmls")
@@ -221,9 +221,6 @@ async def get_meta_data(
 async def post_specific(image: UploadFile):
     given_content = await image.read()
     if os.path.exists(fr"image_bucked/{image.filename}"):
-        # response_content = ResponseMessage(message=f"given image {image.filename} already exist on DB"),
-        # print(response_content)
-        # return JSONResponse(content=response_content.dict(), status_code=409)
         response_content = f"Operation denied... given image {image.filename} already exist on DB",
         return JSONResponse(content=response_content, status_code=409)
     else:
@@ -299,7 +296,8 @@ async def get_thumbnail_detail(
         heightfactor: float,
         zoomlevel:int,
 ):
-    print("@ get_thumb_detail + fname", fname, x_location_factor, y_location_factor, widthfactor, heightfactor)
+    if should_print:
+        print("@ get_thumb_detail + fname", fname, x_location_factor, y_location_factor, widthfactor, heightfactor)
     thumbnail = images_service.wsi_thumbnail(fname, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT)
     x_location = round(x_location_factor * thumbnail.width)
     y_location = round((y_location_factor * thumbnail.height))
@@ -322,7 +320,7 @@ async def get_thumbnail_detail(
         print("y_location ", y_location)
 
     if max_x_value > thumbnail.width:
-        print("allert max_x_value " , max_x_value)
+        #print("allert max_x_value " , max_x_value)
         max_x_value = thumbnail.width - 2
     for x in range(x_location , max_x_value):            # oberer Balken
         for y in range(y_location , y_location + 2 ):
@@ -337,14 +335,4 @@ async def get_thumbnail_detail(
         for y in range(y_location , y_location + shown_marked_height ):
             detailed[x, y] = (250, 0, 0)
     return stream_response(thumbnail)
-
-
-# if __name__ != '__app__':
-    # result = images_service.wsi_region("CMU-1.tiff", 0, 20000, 22000, 1200, 1200)
-    # thumbnail = images_service.wsi_thumbnail("CMU-1.tiff", THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT)
-    # meta = images_service.wsi_meta("JP2K-33003-1.tiff")
-    # label = images_service.wsi_label("Leica-1(1).tiff")
-    #print("pprint meta openslide.level[0].height ", meta.get("level[0].height"))
-    #get_thumbnail_detail("CMU-1-Small-Region.tiff", 1, 1, 100, 100, 0)
-    #print("pprint meta levelCount ", meta.get("levelcount"))
 
