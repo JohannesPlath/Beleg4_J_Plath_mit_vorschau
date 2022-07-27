@@ -15,8 +15,10 @@ class ImageList(BaseModel):
 
 class ResponseMessageTrue(BaseModel):
     message: str = Field(
-        example=
-           "file 'CMU-3_test_Kopie.tiff' uploaded at './image_bucked//CMU-3_test_Kopie.tiff'",
+        example=[
+            "required kind of data: *.TIFF, *.tiff, *.svs, *.SVS, *.tif, *.TIF",
+            "if passed, response:",
+           "file 'CMU-3_test_Kopie.tiff' uploaded at './image_bucked//CMU-3_test_Kopie.tiff'"],
         description="image excepted",
     )
 
@@ -49,6 +51,7 @@ class Response_html(BaseModel):
                 '<head>"',
         description="complete interactive HTML-Page",
     )
+
 
 class Response_meta(BaseModel):
     details: List = Field(
@@ -121,6 +124,6 @@ class Response_meta(BaseModel):
                                       '6797|OriginalWidth = 16000|Originalheight = '
                                       '17597|Filtered = 3|ICC Profile = ScanScope v1',
              'tiff.ResolutionUnit': 'inch'}
-],
+        ],
         description="methadata of anspecific image"
-    )
+)
