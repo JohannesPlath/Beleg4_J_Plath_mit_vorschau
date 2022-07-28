@@ -88,10 +88,10 @@ async function getListOfImages() {
 async function getThumbnailDetail(fname){
     actualXLocation = checkIsNaN(actualXLocation)
     actualYLocation = checkIsNaN(actualYLocation)
-    let xLoc = (actualXLocation / maxActualWidth).toFixed(3)
-    let yLoc = (actualYLocation / maxActualHeight).toFixed(3)
-    let markedWidth = (shownWidth / maxActualWidth).toFixed(3)
-    let markedHeight = (shownHeight / maxActualHeight).toFixed(3)
+    let xLoc = (actualXLocation / maxWidth).toFixed(3)
+    let yLoc = (actualYLocation / maxHeight).toFixed(3)
+    let markedWidth = ((shownWidth / maxActualWidth)).toFixed(3)
+    let markedHeight = ((shownHeight / maxActualHeight)).toFixed(3)
     let actualUrl = "/api/wsis/"+ fname  + "/thumb_detail/"+ xLoc+"/"+ yLoc +"/"+ markedWidth +"/"+ markedHeight +"/"+ zoomlevel;
     if (SHOULD_PRINT)
         console.log("-->> @GetThumnailDetail()  actulalURL : " ,  actualUrl);
@@ -114,37 +114,48 @@ async function getNewRegion(newDetail){
     }
 
     if (newDetail == "up"){
-        if (actualYLocation <= 0) {
-            actualYLocation = 0
-        }else if (shownHeight <= maxActualHeight/ Move_FACTOR){
+        if (((shownHeight / maxActualHeight)*maxHeight) < maxHeight/ Move_FACTOR){
+            actualYLocation = actualYLocation - ((shownHeight / maxActualHeight)*maxHeight) *0.95;
+        }
+        else if (shownHeight >= maxHeight / Move_FACTOR){
             actualYLocation = actualYLocation - shownHeight;
         }
         else{
-            actualYLocation = actualYLocation - maxActualHeight/ Move_FACTOR;
+            actualYLocation = actualYLocation - maxHeight/ Move_FACTOR;
         }
     }
     if (newDetail == "down"){
-        if (shownHeight <= maxActualHeight/ Move_FACTOR) {
+        if (((shownHeight / maxActualHeight)*maxHeight) < maxHeight/ Move_FACTOR){
+            actualYLocation = actualYLocation + ((shownHeight / maxActualHeight)*maxHeight) *0.95;
+        }
+        else if (shownHeight >= maxHeight/ Move_FACTOR) {
             actualYLocation = actualYLocation + shownHeight
-        }else if ((actualYLocation + shownHeight) > maxActualHeight) {
-            actualYLocation = maxActualHeight - shownHeight;
+        }
+        else if ((actualYLocation + shownHeight) > maxHeight) {
+            actualYLocation = maxHeight - shownHeight;
         }else{
-            actualYLocation = actualYLocation + maxActualHeight/ Move_FACTOR;
+            actualYLocation = actualYLocation + maxHeight/ Move_FACTOR;
         }
 
     }
     if (newDetail == "left") {
-        if (shownWidth <= maxActualWidth / Move_FACTOR){
+        if (((shownWidth / maxActualWidth) * maxWidth) < maxWidth/ Move_FACTOR){
+            actualXLocation = actualXLocation - ((shownWidth / maxActualWidth) * maxWidth) *0.95;
+        }
+        else if (shownWidth >= maxWidth / Move_FACTOR){
             actualXLocation = actualXLocation - shownWidth;
         }else {
-            actualXLocation = actualXLocation - maxActualWidth / Move_FACTOR;
+            actualXLocation = actualXLocation - maxWidth / Move_FACTOR;
             }
         }
     if (newDetail == "right"){
-        if (shownWidth <= maxActualWidth / Move_FACTOR){
+        if (((shownWidth / maxActualWidth) * maxWidth) < maxWidth/ Move_FACTOR){
+            actualXLocation = actualXLocation + ((shownWidth / maxActualWidth) * maxWidth) *0.95;
+        }
+        else if (shownWidth >= maxWidth / Move_FACTOR){
             actualXLocation = actualXLocation + shownWidth;
         }else {
-            actualXLocation = actualXLocation + maxActualWidth / Move_FACTOR;
+            actualXLocation = actualXLocation + maxWidth / Move_FACTOR;
             }
         }
     if (newDetail == "Zoom_Out"){
@@ -196,14 +207,12 @@ function setMaxActualMetaData(currentZoomlevel){
 }
 
 function center_View() {
-    actualXLocation = maxActualWidth / 2;
-    actualXLocation = actualXLocation - (shownWidth / 2);
+    actualXLocation = (maxWidth / 3)  ;
     if (actualXLocation < 0)
-        actualXLocation = 0;
-    actualYLocation = maxActualHeight / 2;
-    actualYLocation = actualYLocation - (shownHeight / 2);
+        actualXLocation = 1;
+    actualYLocation = (maxHeight / 3);
     if (actualYLocation < 0)
-        actualYLocation = 0;
+        actualYLocation = 1;
     if (SHOULD_PRINT) {
         console.log("@ center_View print...")
         printMetadata()
@@ -225,22 +234,22 @@ function printMetadata(){
     }
 }
 function checkWidthExtrema(){
-    if (actualXLocation > maxActualWidth - shownWidth){
-        actualXLocation = maxActualWidth - shownWidth;
+    if (actualXLocation > maxWidth - shownWidth){
+        actualXLocation = maxWidth - shownWidth;
        /* if (actualXLocation > maxActualWidth){
             actualXLocation = maxActualWidth;
         }*/
     }
     if (actualXLocation < 0)
-        actualXLocation = 0;
+        actualXLocation = 1;
     return actualXLocation;
 }
 function checkHeightExtrema(){
 
-    if (actualYLocation > maxActualHeight - shownHeight)
-        actualYLocation = maxActualHeight - shownHeight;
+    if (actualYLocation > maxHeight - shownHeight)
+        actualYLocation = maxHeight - shownHeight;
     if (actualYLocation < 0 )
-        actualYLocation = 0;
+        actualYLocation = 1;
     return actualYLocation;
 }
 

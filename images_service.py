@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse
 should_print = False
 
 abspath = r"./image_bucked/"
-extention_list: List[str] = [".TIFF", ".tiff", ".svs", ".SVS", ".tif", ".TIF"]
+extention_list: List[str] = [".TIFF", ".tiff", ".svs", ".SVS", ".tif", ".TIF", ".vms", ".vmu", ".ndpi", ".scn", ".mrxs", ".svslide", ".bif"]
 
 
 def search_4_specific_extention(local_path, extention):
@@ -25,7 +25,7 @@ def get_list_of_availible_images():
         result: List = []
         for x in extention_list:
             tmp = (
-                search_4_specific_extention(abspath, x))  # "{}{}{}".format (png_list, PNG_list, jpeg_list, JPEG_list)
+                search_4_specific_extention(abspath, x))
             result = result + tmp
         # print(result)
         return result

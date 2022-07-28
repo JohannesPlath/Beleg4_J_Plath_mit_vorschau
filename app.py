@@ -260,8 +260,8 @@ async def get_detailed_image(
         print("y_location ", y_location)
         print("zoomlevel ", zoomlevel)
         metadata = images_service.wsi_meta(actualWsi)
-        print("metadata.get('openslide.level['+ zoomlevel +'].height') ", metadata.get(f'openslide.level[{zoomlevel}].height'))
-        print("metadata.get('openslide.level['+ zoomlevel +'].width') ", metadata.get(f'openslide.level[{zoomlevel}].width'))
+        print("metadata.get('openslide.level['", zoomlevel ,"'].height') ", metadata.get(f'openslide.level[{zoomlevel}].height'))
+        print("metadata.get('openslide.level['", zoomlevel ,"'].width') ", metadata.get(f'openslide.level[{zoomlevel}].width'))
         print("@app.get arrived")
 
     region = images_service.wsi_region(actualWsi, zoomlevel, x_location, y_location, width, height)
@@ -307,6 +307,7 @@ async def get_thumbnail_detail(
     check_meta_data(fname, x_location, y_location, shown_marked_width, shown_marked_height, zoomlevel)
     detailed = thumbnail.load()
     max_x_value = x_location + shown_marked_width
+    max_y_level = y_location + shown_marked_height
     if should_print:
         print("x_location_factor ", x_location_factor)
         print("y_location_factor ", y_location_factor)
@@ -322,17 +323,19 @@ async def get_thumbnail_detail(
     if max_x_value > thumbnail.width:
         #print("allert max_x_value " , max_x_value)
         max_x_value = thumbnail.width - 2
+    if max_y_level > thumbnail.height:
+        max_y_level = thumbnail.height -2
     for x in range(x_location , max_x_value):            # oberer Balken
         for y in range(y_location , y_location + 2 ):
             detailed[x, y] = (250, 0, 0)
     for x in range(x_location, max_x_value):             # unterer Balken
-        for y in range(y_location + shown_marked_height - 2, y_location + shown_marked_height ):
+        for y in range(y_location + shown_marked_height - 2, max_y_level ):
             detailed[x, y] = (250, 0, 0)
     for x in range(x_location, x_location + 2):                 # linker Balken
-        for y in range(y_location , y_location + shown_marked_height ):
+        for y in range(y_location , max_y_level ):
             detailed[x, y] = (250, 0, 0)
     for x in range(x_location + shown_marked_width - 2, max_x_value ):  # rechter Balken
-        for y in range(y_location , y_location + shown_marked_height ):
+        for y in range(y_location, max_y_level):
             detailed[x, y] = (250, 0, 0)
     return stream_response(thumbnail)
 
